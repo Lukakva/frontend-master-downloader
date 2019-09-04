@@ -25,8 +25,8 @@ module.exports = async ({ user, pass, courses, id }) => {
   const button = await page.$('button');
   await button.click();
   console.log(chalk.green(user + ' logged \n'));
-  console.log(chalk.green('First scrape all the links... \n'));
-  let selector = '.title a';
+  console.log(chalk.green('Awaiting for a sign that you are logged in... \n'));
+  let selector = '.card-title a';
   await page.waitForSelector(selector);
   const obj = {
     selector,
@@ -34,17 +34,8 @@ module.exports = async ({ user, pass, courses, id }) => {
   };
 
   await page.waitFor(3 * SECONDES);
-  let link = await page.evaluate(obj => {
-    const anchors = Array.from(document.querySelectorAll(obj.selector));
-    return anchors
-      .map(anchor => {
-        return `${anchor.href}`;
-      })
-      .filter(text => {
-        return text.split('/')[4] === obj.courses;
-      })
-      .pop();
-  }, obj);
+
+  const link = `${url}/courses/${courses}`;
   await page.goto(link);
   selector = '.LessonListItem a';
   await page.waitForSelector(selector);
